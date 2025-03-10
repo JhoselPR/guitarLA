@@ -1,8 +1,24 @@
+import { useState } from "react";
 import Header from "./components/Header";
 import Guitar from "./components/Guitar";
+import { db } from "./data/db.js";
 
 function App() {
+  const [data, setData] = useState(db);
+  const [cart, setCart] = useState([]);
 
+  function addToCart(item) {
+    const itemExists = cart.findIndex(guitar => guitar.id === item.id);
+    if (itemExists !== -1) {
+      const updatedCart = [...cart];
+      updatedCart[itemExists].quantity++;
+      setCart(updatedCart);
+      return;
+    } else{
+      item.quantity = 1;
+      setCart([...cart, item]);
+    }
+  }
 
   return (
     <>
@@ -12,9 +28,15 @@ function App() {
         <h2 className="text-center">Nuestra Colección</h2>
 
         <div className="row mt-5">
-          <Guitar />
-
-
+          {
+            data.map((guitar) => (
+              <Guitar
+                key={guitar.id}
+                guitar={guitar}
+                addToCart={addToCart}
+              />
+            ))
+          }
 
         </div>
       </main>
